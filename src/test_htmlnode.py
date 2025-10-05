@@ -2,6 +2,7 @@ import unittest
 
 from html_node import HTMLNode
 from leaf_node import LeafNode
+from parent_node import ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_empty_node_props(self):
@@ -29,6 +30,36 @@ class TestHTMLNode(unittest.TestCase):
     def test_leaf_node_to_html_no_value(self):
         node = LeafNode("a", None, {"href": "https://www.google.com"})
         self.assertRaises(ValueError, node.to_html)
+
+    def test_parent_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_parent_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+    def test_parent_to_html_multiple_children(self):
+        child_node1 = LeafNode("span", "child1")
+        child_node2 = LeafNode("b", "child2")
+        parent_node = ParentNode("div", [child_node1, child_node2])
+        self.assertEqual(parent_node.to_html(), "<div><span>child1</span><b>child2</b></div>")
+
+    def test_parent_to_html_with_props(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("a", [child_node], {"href": "https://www.google.com"})
+        self.assertEqual(parent_node.to_html(), '<a href="https://www.google.com"><span>child</span></a>')
+
+    def test_parent_to_html_with_child_with_props(self):
+        child_node = LeafNode("span", "child", {"href": "https://www.google.com"})
+        parent_node = ParentNode("a", [child_node], {"href": "https://www.google.com"})
+        self.assertEqual(parent_node.to_html(), '<a href="https://www.google.com"><span href="https://www.google.com">child</span></a>')
 
 def main():
     unittest.main()

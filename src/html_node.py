@@ -17,7 +17,7 @@ class HTMLNode():
             return None
 
         html_str = ""
-        for key, val in self.props.values:
+        for key, val in self.props.items():
             html_str += f' {key}="{val}"'
         return html_str
     
