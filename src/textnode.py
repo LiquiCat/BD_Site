@@ -1,16 +1,17 @@
 from __future__ import annotations
 from enum import Enum
 from typing import List
+import re
 
 from leaf_node import LeafNode
 
 class TextType(Enum):
-    PLAIN = ""
-    BOLD = "b"
-    ITALIC = "i"
-    LINK = "a"
-    IMAGE = "img"
-    CODE = "code"
+    PLAIN = "plain text"
+    BOLD = "Bold text"
+    ITALIC = "Italic"
+    LINK = "Link"
+    IMAGE = "Image"
+    CODE = "Code"
 
 class TextNode:
     def __init__(self, text: str, text_type: TextType, url: str = None):
@@ -47,9 +48,9 @@ def text_node_to_html_node(text_node: TextNode):
 def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: TextType):
 
     resulting = []
-    is_text = True
 
     for node in old_nodes:
+        is_text = True
 
         if node.text_type != TextType.PLAIN:
             resulting.append(node)
@@ -70,3 +71,13 @@ def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: 
 
     return resulting
                 
+
+def extract_markdown_images(text):
+    reg = r"!\[([A-Za-z0-9 _]*)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
+    imgs = re.findall(reg, text)
+    return imgs
+
+def extract_markdown_links(text):
+    reg = r"[^!]\[([A-Za-z0-9 _]+)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
+    links = re.findall(reg, text)
+    return links
