@@ -78,6 +78,6 @@ def extract_markdown_images(text):
     return imgs
 
 def extract_markdown_links(text):
-    reg = r"[^!]\[([A-Za-z0-9 _]+)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
+    reg = r"[^!]?\[([A-Za-z0-9 _]+)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
     links = re.findall(reg, text)
     return links
