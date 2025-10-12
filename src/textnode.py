@@ -1,6 +1,6 @@
 from __future__ import annotations
 from enum import Enum
-from typing import List
+from typing import List, Tuple
 import copy
 import re
 
@@ -15,22 +15,22 @@ class TextType(Enum):
     CODE = "Code"
 
 class TextNode:
-    def __init__(self, text: str, text_type: TextType, url: str = None):
+    def __init__(self, text: str, text_type: TextType, url: str = None) -> None:
         self.text = text
         self.text_type = text_type
         self.url = url
 
-    def __eq__(self, value: TextNode):
+    def __eq__(self, value: TextNode) -> bool:
         return \
             self.text == value.text and \
             self.text_type == value.text_type and \
             self.url == value.url
     
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
     
 
-def text_node_to_html_node(text_node: TextNode):
+def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     match text_node.text_type:
         case TextType.PLAIN:
             return LeafNode(tag=None, value=text_node.text)
@@ -45,7 +45,7 @@ def text_node_to_html_node(text_node: TextNode):
         case _:
             raise ValueError("Unsupported type")
         
-def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: TextType):
+def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: TextType) -> List[TextNode]:
 
     resulting = []
 
@@ -71,17 +71,17 @@ def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: 
 
     return resulting
                 
-def extract_markdown_images(text: str):
+def extract_markdown_images(text: str) -> Tuple[str, str]:
     reg = r"!\[([A-Za-z0-9 _]*)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
     imgs = re.findall(reg, text)
     return imgs
 
-def extract_markdown_links(text: str):
+def extract_markdown_links(text: str) -> Tuple[str, str]:
     reg = r"(?<!!)\[([A-Za-z0-9 _]+)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
     links = re.findall(reg, text)
     return links
 
-def split_nodes_image(old_nodes: List[TextNode]):
+def split_nodes_image(old_nodes: List[TextNode]) -> List[TextNode]:
     res = []
     for node in old_nodes:
         images = extract_markdown_images(node.text)
@@ -106,7 +106,7 @@ def split_nodes_image(old_nodes: List[TextNode]):
         res.extend(extracted)
     return res
         
-def split_nodes_link(old_nodes: List[TextNode]):
+def split_nodes_link(old_nodes: List[TextNode]) -> List[TextNode]:
     res = []
     for node in old_nodes:
         links = extract_markdown_links(node.text)
@@ -130,7 +130,7 @@ def split_nodes_link(old_nodes: List[TextNode]):
         res.extend(extracted)
     return res
 
-def text_to_textnodes(text):
+def text_to_textnodes(text:str) -> List[TextNode]:
 
     node = [TextNode(text, TextType.PLAIN)]
     node = split_nodes_delimiter(node, "**", TextType.BOLD)
@@ -140,3 +140,7 @@ def text_to_textnodes(text):
     node = split_nodes_link(node)
 
     return node
+
+
+def markdown_to_blocks(markdown):
+    pass

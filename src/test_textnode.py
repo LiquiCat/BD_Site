@@ -376,7 +376,6 @@ class TestTextNode(unittest.TestCase):
 
         self.assertEqual(nodes, expected)
 
-
     def test_split_to_textnodes_only_bold(self):
         text = "This is **text** with"
         nodes = text_to_textnodes(text)
