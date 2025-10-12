@@ -1,6 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 from typing import List
+import copy
 import re
 
 from leaf_node import LeafNode
@@ -63,21 +64,72 @@ def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: 
 
         for part in node_split:
             if part:
-                if (not is_text):
-                    resulting.append(TextNode(part, text_type))
+                if not is_text:
+                        resulting.append(TextNode(part, text_type))
                 else:
                     resulting.append(TextNode(part, TextType.PLAIN))
             is_text = False if is_text else True
 
     return resulting
                 
-
-def extract_markdown_images(text):
+def extract_markdown_images(text: str):
     reg = r"!\[([A-Za-z0-9 _]*)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
     imgs = re.findall(reg, text)
     return imgs
 
-def extract_markdown_links(text):
+def extract_markdown_links(text: str):
     reg = r"[^!]?\[([A-Za-z0-9 _]+)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
     links = re.findall(reg, text)
     return links
+
+def split_nodes_image(old_nodes: List[TextNode]):
+    res = []
+    for node in old_nodes:
+        images = extract_markdown_images(node.text)
+        extracted = [copy.deepcopy(node)]
+
+        if not images:
+            res.append(node)
+            continue
+        
+        for img in images:
+            img_name = f"![{img[0]}]({img[1]})"
+            around_img = extracted[-1].text.split(img_name, 1)
+
+            if around_img[0]:
+                extracted.insert(-1, TextNode(around_img[0], TextType.PLAIN))
+            extracted.insert(-1, TextNode(img[0], TextType.IMAGE, img[1]))
+            extracted[-1].text = around_img[-1]
+
+        extracted.pop()
+        res.extend(extracted)
+    return res
+        
+
+
+def split_nodes_link(old_nodes: List[TextNode]):
+    res = []
+    for node in old_nodes:
+        links = extract_markdown_links(node.text)
+        extracted = [copy.deepcopy(node)]
+
+        if not links:
+            res.append(node)
+            continue
+        
+        for lnk in links:
+            lnk_name = f"[{lnk[0]}]({lnk[1]})"
+            around_lnk = extracted[-1].text.split(lnk_name, 1)
+
+            if around_lnk[0]:
+                extracted.insert(-1, TextNode(around_lnk[0], TextType.PLAIN))
+            extracted.insert(-1, TextNode(lnk[0], TextType.LINK, lnk[1]))
+            extracted[-1].text = around_lnk[-1]
+
+        extracted.pop()
+        res.extend(extracted)
+    return res
+
+
+def text_to_textnodes(text):
+    pass
