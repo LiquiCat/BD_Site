@@ -45,7 +45,6 @@ def text_node_to_html_node(text_node: TextNode):
         case _:
             raise ValueError("Unsupported type")
         
-
 def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: TextType):
 
     resulting = []
@@ -78,7 +77,7 @@ def extract_markdown_images(text: str):
     return imgs
 
 def extract_markdown_links(text: str):
-    reg = r"[^!]?\[([A-Za-z0-9 _]+)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
+    reg = r"(?<!!)\[([A-Za-z0-9 _]+)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
     links = re.findall(reg, text)
     return links
 
@@ -101,12 +100,12 @@ def split_nodes_image(old_nodes: List[TextNode]):
             extracted.insert(-1, TextNode(img[0], TextType.IMAGE, img[1]))
             extracted[-1].text = around_img[-1]
 
-        extracted.pop()
+        if not extracted[-1].text:
+            extracted.pop()
+
         res.extend(extracted)
     return res
         
-
-
 def split_nodes_link(old_nodes: List[TextNode]):
     res = []
     for node in old_nodes:
@@ -126,10 +125,18 @@ def split_nodes_link(old_nodes: List[TextNode]):
             extracted.insert(-1, TextNode(lnk[0], TextType.LINK, lnk[1]))
             extracted[-1].text = around_lnk[-1]
 
-        extracted.pop()
+        if not extracted[-1].text:
+            extracted.pop()
         res.extend(extracted)
     return res
 
-
 def text_to_textnodes(text):
-    pass
+
+    node = [TextNode(text, TextType.PLAIN)]
+    node = split_nodes_delimiter(node, "**", TextType.BOLD)
+    node = split_nodes_delimiter(node, "_", TextType.ITALIC)
+    node = split_nodes_delimiter(node, "`", TextType.CODE)
+    node = split_nodes_image(node)
+    node = split_nodes_link(node)
+
+    return node
