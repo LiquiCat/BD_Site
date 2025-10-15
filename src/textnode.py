@@ -42,6 +42,8 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
             return LeafNode(tag="a", value=text_node.text, props={"href": text_node.url})
         case TextType.IMAGE:
             return LeafNode(tag="img", value="", props={"src": text_node.url, "alt":text_node.text})
+        case TextType.CODE:
+            return LeafNode(tag="code", value=text_node.text)
         case _:
             raise ValueError("Unsupported type")
         
@@ -141,11 +143,3 @@ def text_to_textnodes(text:str) -> List[TextNode]:
 
     return node
 
-def markdown_to_blocks(markdown: str) -> List[str]:
-    blocks = markdown.split("\n\n")
-    blocks = map(str.strip, blocks)
-    blocks = filter(lambda x: x, blocks)
-    blocks = list(blocks)
-
-    return blocks
-    

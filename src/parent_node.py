@@ -23,3 +23,6 @@ class ParentNode(HTMLNode):
         res_html += f"</{self.tag}>"
 
         return res_html
+    
+    def add_child(self, child):
+        self.children.append(child)
