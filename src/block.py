@@ -31,7 +31,7 @@ def block_to_block_type(markdown: str) -> BlockType:
     
     all_lines =  markdown.split("\n")
 
-    if verify_lines_start_with(r"^> ", all_lines):
+    if verify_lines_start_with(r"^> ?", all_lines):
         return BlockType.QUOTE
     if verify_lines_start_with(r"^- ", all_lines):
         return BlockType.UNORDERED_LIST
@@ -80,7 +80,7 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
                 node = ParentNode(f"pre", [child_node])
 
             case BlockType.QUOTE:
-                block_quote = block.replace("\n>",">")[2:]
+                block_quote = re.sub(r"> ?", "", block)
                 node = ParentNode(f"blockquote", text_to_children(block_quote))
 
             case BlockType.UNORDERED_LIST:
@@ -88,7 +88,7 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
                 node = ParentNode(f"ul", [])
 
                 for line in list_items:
-                    child = LeafNode("li", text_to_children(line[:2]))
+                    child = ParentNode("li", text_to_children(line[2:]))
                     node.add_child(child)
 
             case BlockType.ORDERED_LIST:
@@ -100,7 +100,7 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
                     while line[i].isdigit():
                         i += 1
 
-                    child = LeafNode("li", text_to_children(line[:i+2]))
+                    child = ParentNode("li", text_to_children(line[i+2:]))
                     node.add_child(child)
 
         parent.add_child(node)

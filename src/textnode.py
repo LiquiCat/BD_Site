@@ -79,7 +79,7 @@ def extract_markdown_images(text: str) -> Tuple[str, str]:
     return imgs
 
 def extract_markdown_links(text: str) -> Tuple[str, str]:
-    reg = r"(?<!!)\[([A-Za-z0-9 _]+)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
+    reg = r"(?<!!)\[([A-Za-z0-9 _.]+)\]\((https?:\/\/[A-Za-z0-9 _./@-]+)\)"
     links = re.findall(reg, text)
     return links
 
@@ -113,7 +113,6 @@ def split_nodes_link(old_nodes: List[TextNode]) -> List[TextNode]:
     for node in old_nodes:
         links = extract_markdown_links(node.text)
         extracted = [copy.deepcopy(node)]
-
         if not links:
             res.append(node)
             continue
