@@ -74,12 +74,12 @@ def split_nodes_delimiter(old_nodes: List[TextNode], delimiter: str, text_type: 
     return resulting
                 
 def extract_markdown_images(text: str) -> Tuple[str, str]:
-    reg = r"!\[([A-Za-z0-9 _]*)\]\((https?:\/\/[A-Za-z0-9 _./@]+)\)"
+    reg = r"!\[([A-Za-z0-9 _.]*)\]\(((?:https?:\/)?\/[A-Za-z0-9 _./@-]+)\)"
     imgs = re.findall(reg, text)
     return imgs
 
 def extract_markdown_links(text: str) -> Tuple[str, str]:
-    reg = r"(?<!!)\[([A-Za-z0-9 _.]+)\]\((https?:\/\/[A-Za-z0-9 _./@-]+)\)"
+    reg = r'(?<!!)\[([A-Za-z0-9 _.<"]+)\]\(((?:https?:\/\/)?[A-Za-z0-9 _./@-]+)\)'
     links = re.findall(reg, text)
     return links
 

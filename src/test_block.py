@@ -102,7 +102,7 @@ the **same** even with inline stuff
 >eggs
 > meth"""
         b_type = block_to_block_type(md)
-        self.assertEqual(b_type, BlockType.PARAGRAPH)
+        self.assertEqual(b_type, BlockType.QUOTE)
 
     def test_b2b_quote_error_missing_line(self):
         md = """> milk
