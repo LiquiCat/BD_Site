@@ -16,11 +16,6 @@ def copy_to_public(static_dir, public_dir, folder_relative):
     cur_dir_s = os.path.join(static_dir, folder_relative)
     cur_dir_p = os.path.join(public_dir, folder_relative)
 
-    print(f"{static_dir=}")
-    print(f"{folder_relative=}")
-    print(f"{cur_dir_s=}")
-    
-
     for item in os.listdir(cur_dir_s):
         path_in_static = os.path.join(cur_dir_s, item)
         if os.path.isfile(path_in_static):
