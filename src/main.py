@@ -7,7 +7,7 @@ from block import extract_title, markdown_to_html_node
 
 def copy_process():
     working = os.getcwd()
-    public_dir = os.path.join(working, "public")
+    public_dir = os.path.join(working, "docs")
     static_dir = os.path.join(working, "static")
 
     if os.path.exists(public_dir):
@@ -43,8 +43,8 @@ def generate_page(basepath, from_path, template_path, dest_path):
     html_page = markdown_to_html_node(markdown).to_html()
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html_page)
-    template = template.replace('href="/', f'href="{basepath}')
-    template = template.replace('src="/', f'src="{basepath}')
+    template = template.replace('href="/', f'href="{basepath}/')
+    template = template.replace('src="/', f'src="{basepath}/')
 
     with open(dest_path, "w+") as f:
         f.write(template)
